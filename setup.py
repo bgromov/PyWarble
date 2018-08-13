@@ -61,6 +61,8 @@ class WarbleBuild(build_py):
 
             so = os.path.join(warble, 'dist', 'release', 'lib', machine)
             WarbleBuild._move(so, dest, 'libwarble.so')
+        elif (platform.system() == 'Darwin'):
+            print("Using warble wrapper of PyBLEWrapper")
         else:
             raise RuntimeError("pywarble is not supported for the '%s' platform" % platform.system())
 
@@ -78,6 +80,9 @@ setup(
     url='https://github.com/mbientlab/PyWarble',
     author='MbientLab',
     author_email="hello@mbientlab.com",
+    install_requires=[
+        'PyBLEWrapper >= 0.3.0',
+    ],
     cmdclass={
         'build_py': WarbleBuild,
         'clean': WarbleClean
@@ -87,7 +92,7 @@ setup(
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
-        'Operating System :: POSIX :: Linux',
+        'Operating System :: POSIX :: Linux :: Darwin',
         'Operating System :: Microsoft :: Windows :: Windows 10',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',

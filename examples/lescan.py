@@ -3,7 +3,7 @@ from time import sleep
 
 
 def scan_result_printer(result):
-    print("mac: %s" % result.mac)
+    print("uuid: %s" % result.uuid)
     print("name: %s" % result.name)
     print("rssi: %ddBm" % result.rssi)
 
