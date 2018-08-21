@@ -40,6 +40,13 @@ if (platform.system() == 'Windows'):
     libwarble = CDLL(os.path.join(os.path.dirname(__file__), 'warble.dll'))
 elif (platform.system() == 'Linux'):
     libwarble = CDLL(os.path.join(os.path.dirname(__file__), 'libwarble.so'))
+elif (platform.system() == 'Darwin'):
+    libwarble = CDLL(os.path.join(os.path.dirname(__file__),
+        'WarbleMacOS.framework',
+        'Versions',
+        'Current',
+        'WarbleMacOS'))
+    print 'HERE:', libwarble
 else:
     raise RuntimeError("pywarble is not supported for the '%s' platform" % platform.system())
 
@@ -69,7 +76,7 @@ libwarble.warble_scan_result_has_service_uuid.argtypes = [POINTER(_ScanResult), 
 
 libwarble.warble_gatt_connect_async.restype = None
 libwarble.warble_gatt_connect_async.argtypes = [POINTER(_Gatt), c_void_p, FnVoid_VoidP_WarbleGattP_CharP]
-    
+
 libwarble.warble_gatt_disconnect.restype = None
 libwarble.warble_gatt_disconnect.argtypes = [POINTER(_Gatt)]
 

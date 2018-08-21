@@ -1,7 +1,7 @@
 from distutils.command.clean import clean
 from distutils.dir_util import copy_tree
 from multiprocessing import cpu_count
-from shutil import move 
+from shutil import move
 from subprocess import call, STDOUT
 from setuptools import setup
 from setuptools.command.build_py import build_py
@@ -61,12 +61,23 @@ class WarbleBuild(build_py):
 
             so = os.path.join(warble, 'dist', 'release', 'lib', machine)
             WarbleBuild._move(so, dest, 'libwarble.so')
+        elif (platform.system() == 'Darwin'):
+            macos_warble = os.path.join(warble, "WarbleMacOS.xcodeproj")
+            args = ["xcodebuild", "-project", macos_warble, "-configuration", "Debug"]
+            # if (os.path.exists(version_mk)):
+            #     args.append("SKIP_VERSION=1")
+
+            if (call(args, cwd=macos_warble, stderr=STDOUT) != 0):
+                raise RuntimeError("Failed to compile libwarble.so")
+
+            so = os.path.join(warble, 'build', 'Debug')
+            WarbleBuild._move(so, dest, 'WarbleMacOS.framework')
         else:
             raise RuntimeError("pywarble is not supported for the '%s' platform" % platform.system())
 
         build_py.run(self)
 
-so_pkg_data = ['libwarble.so*'] if platform.system() == 'Linux' else ['warble.dll']
+so_pkg_data = ['libwarble.so*'] if platform.system() == 'Linux' else ['WarbleMacOS'] if platform.system() == 'Darwin' else ['warble.dll']
 setup(
     name='warble',
     packages=['mbientlab', 'mbientlab.warble'],
@@ -87,7 +98,7 @@ setup(
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
-        'Operating System :: POSIX :: Linux',
+        'Operating System :: POSIX :: Linux :: Darwin',
         'Operating System :: Microsoft :: Windows :: Windows 10',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
